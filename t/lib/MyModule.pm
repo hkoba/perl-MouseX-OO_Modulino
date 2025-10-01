@@ -7,7 +7,7 @@ use File::AddInc qw($libdir); use lib "$libdir/../../lib";
 # BEGIN {
 #   extends 'MouseX::OO_Modulino';
 # }
-use MouseX::OO_Modulino;
+use MouseX::OO_Modulino -as_base;
 
 has foo => (is => 'ro', default => 'FOO');
 

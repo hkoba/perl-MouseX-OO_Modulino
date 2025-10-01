@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 package MouseX::OO_Modulino;
-use Mouse;
-use Mouse::Exporter;
+use MouseX::OO_Modulino::MOP4Import -as_base;
+
+our $VERSION = '0.01';
 
 use Carp ();
 use Module::Runtime ();
@@ -14,22 +15,6 @@ use Data::Dumper ();
 
 use JSON::MaybeXS ();
 use constant USING_CPANEL_JSON_XS => JSON::MaybeXS::JSON()->isa("Cpanel::JSON::XS");
-
-our $VERSION = "0.01";
-
-Mouse::Exporter->setup_import_methods(
-  also => 'Mouse',
-);
-
-sub init_meta {
-  my ($class, %opts) = @_;
-
-  my $meta = Mouse->init_meta(%opts);
-
-  $meta->superclasses(__PACKAGE__);
-
-  return $meta;
-}
 
 #========================================
 
@@ -155,7 +140,7 @@ sub cli_encode_json_as_bytes {
 
 sub cli_write_fh_as_dump {
   my ($self, $outFH, $item) = @_;
-  print $outFH Data::Dumper->new([$item])->Terse(1)->Indent(0)->Dump, "\n";
+  print $outFH $self->cli_encode_dump($item), "\n";
 }
 
 sub cli_exit_for_result {
