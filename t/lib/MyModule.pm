@@ -9,7 +9,7 @@ use File::AddInc qw($libdir); use lib "$libdir/../../lib";
 # }
 use MouseX::OO_Modulino -as_base;
 
-has foo => (is => 'ro', default => 'FOO');
+has foo => (is => 'ro', default => 'FOO', documentation => 'this is foo');
 
 sub bar { [shift->foo , "bar", @_] }
 
