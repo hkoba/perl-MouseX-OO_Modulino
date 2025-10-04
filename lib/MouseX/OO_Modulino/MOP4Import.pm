@@ -77,19 +77,24 @@ sub dispatch_import {
   my ($name, $exported);
 
   if (not ref $declSpec and $declSpec =~ /^-([A-Za-z]\w*)$/) {
-    my $pragma = $1;
 
-    my $sub = $myPack->can("declare_$pragma") or do {
-      Carp::croak "No such pragma: $pragma at $opts->[1] line $opts->[2]";
-    };
-
-    $sub->($myPack, $opts);
+    $myPack->dispatch_declare_pragma($opts, $1);
 
   }
   else {
 
     $myPack->dispatch_import_symbols($opts, $declSpec);
   }
+}
+
+sub dispatch_declare_pragma {
+  my ($myPack, $opts, $pragma, @rest) = @_;
+
+  my $sub = $myPack->can("declare_$pragma") or do {
+    Carp::croak "No such pragma: $pragma at $opts->[1] line $opts->[2]";
+  };
+
+  $sub->($myPack, $opts, @rest);
 }
 
 sub declare_as_base {
