@@ -170,11 +170,11 @@ Usage: @{[File::Basename::basename($0)]} [--opt=value].. <Command> ARGS...
 END
 
   if (my @cmds = $self->cli_describe_commands) {
-    push @msg, "\nCommands\n", @cmds;
+    push @msg, "\nCommands:\n", @cmds;
   }
 
   if (my @opts = $self->cli_describe_options) {
-    push @msg, "\n", @opts;
+    push @msg, "\nOptions:\n", @opts;
   }
 
   die join("", @msg);
@@ -182,20 +182,35 @@ END
 
 sub cli_describe_commands {
   my ($self) = @_;
+  my %attrs = map {$_ => 1} $self->meta->get_all_attributes;
   map {
-    if ($_ =~ /^cli_|^meta/) {
+    if ($attrs{$_} || $_ =~ /^cli_|^meta/ ) {
       ()
     } else {
       "  $_\n"
     }
-  } $self->meta->get_method_list;
+  } sort $self->meta->get_method_list;
 }
 
 sub cli_describe_options {
   my ($self) = @_;
+  my $meta = $self->meta;
+  my $maxLen = 0;
+  my @spec = map {
+    my $att = $_;
+    if ($att->associated_class == $meta) {
+      my $doc = $att->{documentation};
+      my $name = $att->name;
+      $maxLen = length($name) > $maxLen ? length($name): $maxLen;
+      [$name, $doc];
+    } else {
+      ()
+    }
+  } $meta->get_all_attributes;
   map {
-    "  ".$_->name."\n";
-  } $self->meta->get_all_attributes;
+    my ($name, $doc) = @$_;
+    sprintf "  --%-${maxLen}s  %s\n", $name, $doc // ""
+  } @spec;
 }
 
 sub cli_precmd {
