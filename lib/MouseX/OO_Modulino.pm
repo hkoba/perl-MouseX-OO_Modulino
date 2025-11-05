@@ -166,30 +166,43 @@ sub cmd_help {
   $self->cli_precmd();
 
   my @msg = (join("\n", @_, <<END));
-Usage: @{[File::Basename::basename($0)]} [--opt=value].. <Command> ARGS...
+Usage: @{[File::Basename::basename($0)]} [--opt=value].. <Command | Method> ARGS...
 END
 
-  if (my @cmds = $self->cli_describe_commands) {
-    push @msg, "\nCommands:\n", @cmds;
-  }
+  my @cmds = $self->cli_describe_commands;
+  my @opts = $self->cli_describe_options;
 
-  if (my @opts = $self->cli_describe_options) {
-    push @msg, "\nOptions:\n", @opts;
-  }
+  push @msg, "\nCommands:\n", @cmds if @cmds;
+
+  push @msg, "\n" if @cmds && @opts;
+
+  push @msg, "\nOptions:\n",  @opts if @opts;
 
   die join("", @msg);
 }
 
 sub cli_describe_commands {
   my ($self) = @_;
-  my %attrs = map {$_ => 1} $self->meta->get_all_attributes;
+  my $meta = $self->meta;
   map {
-    if ($attrs{$_} || $_ =~ /^cli_|^meta/ ) {
-      ()
-    } else {
-      "  $_\n"
-    }
-  } sort $self->meta->get_method_list;
+    my $subName = $_;
+    (my $name = $subName) =~ s/^cmd_//;
+    my $rawAtts = $meta->get_method($subName)->attributes;
+    my $attsDict = $self->cli_parse_attributes(@$rawAtts);
+    "  $name" . (defined $attsDict->{Doc} ? "  -- $attsDict->{Doc}" : "");
+  } sort grep {/^cmd_/} $meta->get_method_list;
+}
+
+sub cli_parse_attributes {
+  my ($self, @atts) = @_;
+  my $atts = +{};
+  foreach my $attDesc (@atts) {
+    my ($name, $value) = $attDesc =~ m{^([^\(]+)([\(].*)?\z}
+      or Carp::croak "Can't parse attribute $attDesc";
+    $value =~ s/^\(|\)\z//g if defined $value;
+    $atts->{$name} = $value // 1;
+  }
+  $atts;
 }
 
 sub cli_describe_options {
