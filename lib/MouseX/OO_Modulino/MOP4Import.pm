@@ -112,6 +112,38 @@ sub declare_as_base {
   $myPack->init_meta(for_class => $caller, @rest);
 }
 
+sub declare_has {
+  my ($myPack, $opts, $nameSpec, @attrs) = @_;
+
+  unless (@attrs % 2 == 0) {
+    Carp::croak "Usage: [has 'name' => (key => value, ...)],";
+  }
+
+  my $meta = Mouse::Meta::Class->initialize($opts->[0]);
+
+  foreach my $name (ref $nameSpec ? @$nameSpec : $nameSpec) {
+    $meta->add_attribute($name, @attrs);
+  }
+
+  $meta;
+}
+
+sub declare_field {
+  my ($myPack, $opts, $nameSpec, @attrs) = @_;
+
+  my $meta = $myPack->has($opts, $nameSpec, @attrs);
+
+  my $sym = globref(ref $_[0] || $_[0], 'FIELDS');
+  unless (*{$sym}{HASH}) {
+    *$sym = {};
+  }
+  my $fields = *{$sym}{HASH};
+
+  foreach my $name (ref $nameSpec ? @$nameSpec : $nameSpec) {
+    $fields->{$name} = $meta;
+  }
+}
+
 our %SIGIL_MAP = qw(
   * GLOB
   $ SCALAR
