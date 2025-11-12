@@ -1,12 +1,12 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "Turn your Mouse class into JSON-aware Object-Oriented Modulino.",
    "author" : [
       "Kobayasi, Hiroaki <buribullet@gmail.com>"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Minilla/v3.1.25, CPAN::Meta::Converter version 2.150010",
    "license" : [
-      "perl_5"
+      "unknown"
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
@@ -42,16 +42,32 @@
       },
       "runtime" : {
          "requires" : {
+            "JSON::MaybeXS" : "0",
+            "Module::Runtime" : "0",
+            "Mouse" : "0",
             "perl" : "5.008001"
          }
       },
       "test" : {
          "requires" : {
+            "File::AddInc" : "0",
+            "Test::Command" : "0",
             "Test::More" : "0.98"
          }
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/hkoba/perl-MouseX-OO_Modulino/issues"
+      },
+      "homepage" : "https://github.com/hkoba/perl-MouseX-OO_Modulino",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/hkoba/perl-MouseX-OO_Modulino.git",
+         "web" : "https://github.com/hkoba/perl-MouseX-OO_Modulino"
+      }
+   },
    "version" : "0.01",
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 1
