@@ -178,6 +178,7 @@ END
 
   push @msg, "\nOptions:\n",  @opts if @opts;
 
+  $! = 0; $? = 0;
   die join("", @msg);
 }
 
