@@ -42,6 +42,7 @@
       },
       "runtime" : {
          "requires" : {
+            "File::AddInc" : "0",
             "JSON::MaybeXS" : "0",
             "Module::Runtime" : "0",
             "Mouse" : "0",
@@ -50,7 +51,6 @@
       },
       "test" : {
          "requires" : {
-            "File::AddInc" : "0",
             "Test::Command" : "0",
             "Test::More" : "0.98"
          }
@@ -68,7 +68,7 @@
          "web" : "https://github.com/hkoba/perl-MouseX-OO_Modulino"
       }
    },
-   "version" : "0.01",
+   "version" : "0.02",
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 1
 }
